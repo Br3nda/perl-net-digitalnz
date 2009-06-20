@@ -134,7 +134,7 @@ __END__
 
 =head1 NAME
 
-# Net::DigitalNZ - Perl interface to digitalnz.org 's open data api.
+Net::DigitalNZ - Perl interface to digitalnz.org 's open data api.
 
 =head1 DESCRIPTION
       
