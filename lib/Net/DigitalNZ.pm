@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use URI::Escape;
 use JSON::Any 1.19;
-
+use LWP::UserAgent 2.032;
 use Data::Dumper;
 
 our $VERSION = '0.01';
@@ -27,16 +27,16 @@ our $VERSION = '0.01';
 
 # curl "http://api.digitalnz.org/records/v1.xml/?api_key=...&search_text=wellington" | less
 
-sub search {
+sub Search {
     my $self = shift;
     my $api_key = shift;
     my $query = shift;
-    my $params = shift || {};
+#     my $params = shift || {};
 
     #grab the params
-    my $num_results = $params->{'num_results'} || 10;
-    my $start = $params->{'start'} || 1;
-    my $sort = $params->{'sort'} || undef;
+#     my $num_results = $params->{'num_results'} || 10;
+#     my $start = $params->{'start'} || 1;
+#     my $sort = $params->{'sort'} || undef;
 
 
     #build URL
@@ -61,6 +61,45 @@ sub search {
 }
 
 
+
+sub new {
+  my $class = shift;
+
+  my %conf;
+
+  if ( scalar @_ == 1 ) {
+    if ( ref $_[0] ) {
+      %conf = %{ $_[0] };
+    } else {
+        die "Bad argument \"" . $_[0] . "\" passed, please pass a hashref containing config values.";
+    }
+  }
+  else {
+    %conf = @_;
+  }
+
+  die "API key required" unless $conf{api_key};
+
+    
+  $conf{apiurl}   = 'http://api.digitalnz.org' unless defined $conf{apiurl};
+
+  ### Set useragents, HTTP Headers, source codes.
+  $conf{useragent} = "Net::DigitalNZ/$Net::DigitalNZ::VERSION (PERL)"
+              unless defined $conf{useragent};
+                     
+  ### Create an LWP Object to work with
+  $conf{ua} = LWP::UserAgent->new();
+
+#   $conf{ua}->env_proxy();
+
+  $conf{response_error}  = undef;
+  $conf{response_code}   = undef;
+  $conf{response_method} = undef;
+
+  return bless {%conf}, $class;
+}
+                              
+
 1;
 
 =head1 NAME
@@ -69,22 +108,7 @@ Net::Digitalnz Search
 
 =head1 SYNOPSYS
 
-  use Net::Digitalnz;
 
-  my $digitalnz = Net::Digitalnz::Search->new();
-
-  my $results = $digitalnz->search('Waitangi');
-  foreach my $r (@{ $results }) {
-    my $speaker =  $r->{from_user};
-    my $text = $r->{text};
-    my $time = $r->{created_at};
-    print "$time <$speaker> $text\n";
-  }
-
-   #you can also use any methods from Net::Twitter.
-   my $digitalnz = Net::Twitter::Search->new(username => $username, password => $password);
-   my $steve = $digitalnz->search('Steve');
-   $digitalnz->update($steve .'? Who is steve?');
     
 =head1 DESCRIPTION
 
