@@ -1,3 +1,4 @@
+
 package Net::DigitalNZ;
 #Based heavily on Net::Twitter
 
@@ -138,9 +139,9 @@ Net::DigitalNZ - Perl interface to digitalnz.org 's open data api.
 
 =head1 DESCRIPTION
       
-      The metadata available through DigitalNZ comes from content providers across the New Zealand cultural and heritage, broadcasting, education, and government sectors; as well as local community sources and individuals.
+  The metadata available through DigitalNZ comes from content providers across the New Zealand cultural and heritage, broadcasting, education, and government sectors; as well as local community sources and individuals.
 
-      You will need to obtain your own API key from http://digitalnz.org
+  You will need to obtain your own API key from http://digitalnz.org
       
 =head1 SYNOPSIS
       
@@ -154,24 +155,25 @@ Net::DigitalNZ - Perl interface to digitalnz.org 's open data api.
 
 =head2 search
 
-    The search records API call is passed a search query and returns a corresponding result set
+The search records API call is passed a search query and returns a corresponding result set
 
-#simple query
+      #simple query
       my $results = $searcher->search($query);
       
-#more complicated query
+      #more complicated query
       my $results = $searcher->search($query, {key => value});
 
-params
-  * num_results - the number of results the user wishes returned
-  * start - the offset from which the result list should start
-  * sort - the field upon which results are sorted. If sort_field isn't specified the results are sorted by relevance. The sort_field must be one of: category, content_provider, date, syndication_date, title
-  * direction - the direction in which the results are sorted. Can only be used in conjunction with the sort field and must be either asc or desc. If not specified, sort_direction defaults to asc
-  * facets - a list of facet fields to include in the output. See the note on facets below for more information.
-  * facet_num_results - the number of facet results to include. Only used if the facets parameter is specified, and defaults to 10.
-  * facet_start - the offset from which the facet value list should start. Only used if the facets parameter is specified, and defaults to 0.
+  params
+    * num_results - the number of results the user wishes returned
+    * start - the offset from which the result list should start
+    * sort - the field upon which results are sorted. If sort_field isn't specified the results are sorted by relevance. The sort_field must be one of: category, content_provider, date, syndication_date, title
+    * direction - the direction in which the results are sorted. Can only be used in conjunction with the sort field and must be either asc or desc. If not specified, sort_direction defaults to asc
+    * facets - a list of facet fields to include in the output. See the note on facets below for more information.
+    * facet_num_results - the number of facet results to include. Only used if the facets parameter is specified, and defaults to 10.
+    * facet_start - the offset from which the facet value list should start. Only used if the facets parameter is specified, and defaults to 0.
 
-Example
+=head2 Example
+      
       use Net::DigitalNZ;
       
       my $query = 'Waitangi';
@@ -190,26 +192,31 @@ More info at http://www.digitalnz.org/developer/api-docs/search-records
       
 =head2 Response elements
       
-      The search results will return the following elements:
+The search results will return the following elements:
       
-      * num_results_requested - the value of the num_results parameter sent to the API method
-      * result_count - the total number of results matching this search
-      * start - the value of the start parameter sent to the API method
-      * results - the search results data. The results element will contain 0 or more result elements, each containing the following elements:
+num_results_requested
+  the value of the num_results parameter sent to the API method
       
-      category - a string containing one or more category names separated by a comma (e.g. Images, Web pages)
-      content_provider - the institution holding the content to which the record refers
-      date - a date associated with the record (e.g. 1996-01-01T00:00:00.000Z). This field may be empty
-      description - text describing the record
-      display_url - the url for the content on the content provider's website
+result_count
+  the total number of results matching this search
+
+start
+  the value of the start parameter sent to the API method
       
-      id- the internal DigitalNZ identifier (used by the Get Metadata API)
-      metadata-url - the url to the DigitalNZ API method that will return the full metadata for the record
-      source-url - the url that will redirect users directly to the content_url
-      thumbnail-url - the url of for a thumbnail image of the content to which the record refers. This field may be empty.
-      
-      * facets - the facet result data (if requested). The facets element will contain one facet-field element corresponding to each facet requested. Each facet-field element contains a sorted list of value elements that are made up of a name and num-results element. See the note below for more information on facets.
-      
+results
+  the search results data. The results element will contain 0 or more result elements, each containing the following elements:
+
+  * category - a string containing one or more category names separated by a comma (e.g. Images, Web pages)      
+  * content_provider - the institution holding the content to which the record refers      
+  * date - a date associated with the record (e.g. 1996-01-01T00:00:00.000Z). This field may be empty
+  * description - text describing the record
+  * display_url - the url for the content on the content provider's website
+  * id the internal DigitalNZ identifier (used by the Get Metadata API)
+  * metadata-url - the url to the DigitalNZ API method that will return the full metadata for the record
+  * source-url - the url that will redirect users directly to the content_url
+  * thumbnail-url - the url of for a thumbnail image of the content to which the record refers. This field may be empty.
+  * facets - the facet result data (if requested). The facets element will contain one facet-field element corresponding to each facet requested. Each facet-field element contains a sorted list of value elements that are made up of a name and num-results element. See the note below for more information on facets.
+
       
     
 =head1 LICENCE AND COPYRIGHT
