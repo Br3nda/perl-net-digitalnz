@@ -137,6 +137,7 @@ sub search {
 Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
 
 =head1 DESCRIPTION
+      
       The metadata available through DigitalNZ comes from content providers across the New Zealand cultural and heritage, broadcasting, education, and government sectors; as well as local community sources and individuals.
 
       You will need to obtain your own API key from http://digitalnz.org
