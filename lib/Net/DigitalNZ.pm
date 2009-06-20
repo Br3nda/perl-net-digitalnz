@@ -130,15 +130,16 @@ Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
 
 =head1 SYNOPSIS
       
-      use Net::DigitalNZ;
+use Net::DigitalNZ;
+
+my $query = 'Waitangi';
       
-      my $query = 'Waitangi';
-      my $api_key = 'get your own api key from http://digitalnz.org.nz';
-      
-      my $searcher = Net::DigitalNZ->new(api_key => $api_key);
-      
-      
-      my $results = $searcher->search($query);
+my $api_key = 'get your own api key from http://digitalnz.org.nz';
+
+my $searcher = Net::DigitalNZ->new(api_key => $api_key);
+
+
+my $results = $searcher->search($query);
 
 =head1 LICENCE AND COPYRIGHT
 
@@ -149,9 +150,11 @@ modify it under the same terms as Perl itself. See L<perlartistic>.
 
 http://github.com/Br3nda/perl-net-digitalnz/tree/master
       
-=head1 CREDIT
+=head1 AUTHOR
 
-Based heavily on Net::Twitter
+Brenda Wallace <brenda@wallace.net.nz> http://br3nda.com
+      
+Based heavily on Net::Twitter by Chris Thompson
 
 =head1 DISCLAIMER OF WARRANTY
 
