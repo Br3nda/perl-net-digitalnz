@@ -153,7 +153,7 @@ my $api_key = 'get your own api key';
 my $searcher = Net::DigitalNZ->new(api_key => $api_key);
 
 
-my @results = $searcher->search($query);
+my $results = $searcher->search($query);
 
 =head1 METHODS
 
@@ -162,10 +162,10 @@ my @results = $searcher->search($query);
     The search records API call is passed a search query and returns a corresponding result set
 
 #simple query
-      my @results = $searcher->search($query);
+      my $results = $searcher->search($query);
       
 #more complicated query
-      my @results = $searcher->search($query, {key => value});
+      my $results = $searcher->search($query, {key => value});
 
 params
   * num_results - the number of results the user wishes returned
@@ -185,12 +185,15 @@ Example
       
       my $searcher = Net::DigitalNZ->new(api_key => $api_key);
 
-      my @results = $searcher->search($query, {num_results => 1});
-      
+      my $results = $searcher->search($query, {start=>10, num_results => 2});
+      print $results->{result_count} . " items found\n";
+      foreach my $r (@{ $results->{results} } ) {
+        print $r->{id} . ': '. $r->{title} ."\n";
+      }      
       
 More info at http://www.digitalnz.org/developer/api-docs/search-records
       
-=head2 Response elements
+=head2 Response elments
       
       The search results will return the following elements:
       
