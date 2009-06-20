@@ -1,3 +1,5 @@
+#BAsed heavily on Net::Twitter
+
 package Net::DigitalNZ;
 $VERSION = "0.03";
 use 5.005;
@@ -92,10 +94,7 @@ sub search {
     $url .= 'api_key='. $self->{api_key};
     $url .= '&search_text='. $query;
     my $retval;
-                                  
-                                              
     ### Make the request, store the results.
-                                                
     my $req = $self->{ua}->get($url);
 
     $self->{response_code}    = $req->code;
@@ -126,17 +125,18 @@ __END__
                                                                                                                     
 =head1 NAME
 
-      Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
+Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
       
 =head1 VERSION
 
-      This document describes Net::DigitalNZ version 0.03
+This document describes Net::DigitalNZ version 0.03
 
 =head1 SYNOPSIS
+      
       use Net::DigitalNZ;
       
       my $query = 'Waitangi';
-      my $api_key = 'get your own api key';
+      my $api_key = 'get your own api key from http://digitalnz.org.nz';
       
       my $searcher = Net::DigitalNZ->new(api_key => $api_key);
       
