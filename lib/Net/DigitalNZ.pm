@@ -1,9 +1,3 @@
-##############################################################################
-# Net::Twitter - Perl OO interface to www.twitter.com
-# v2.12
-# Copyright (c) 2009 Chris Thompson
-##############################################################################
-
 package Net::DigitalNZ;
 $VERSION = "0.03";
 use 5.005;
@@ -28,28 +22,28 @@ if ( scalar @_ == 1 ) {
   }
   else {
     %conf = @_;
-    }
-    $conf{apiurl}   = 'http://api.digitalnz.org/' unless defined $conf{apiurl};
+  }
+  $conf{apiurl}   = 'http://api.digitalnz.org/' unless defined $conf{apiurl};
 
-    ### Set useragents, HTTP Headers, source codes.
-    $conf{useragent} = "Net::DigitalNZ/$Net::DigitalNZ::VERSION (PERL)"
-    unless defined $conf{useragent};
-    ### Allow specifying a class other than LWP::UA
+  ### Set useragents, HTTP Headers, source codes.
+  $conf{useragent} = "Net::DigitalNZ/$Net::DigitalNZ::VERSION (PERL)"
+  unless defined $conf{useragent};
+  ### Allow specifying a class other than LWP::UA
 
-    $conf{no_fallback} = 0 unless defined $conf{no_fallback};
-    $conf{useragent_class} ||= '';
+  $conf{no_fallback} = 0 unless defined $conf{no_fallback};
+  $conf{useragent_class} ||= '';
 
-    ### Create an LWP Object to work with
-    $conf{ua} = LWP::UserAgent->new();
+  ### Create an LWP Object to work with
+  $conf{ua} = LWP::UserAgent->new();
 
 
-    $conf{ua}->env_proxy();
+  $conf{ua}->env_proxy();
 
-    $conf{response_error}  = undef;
-    $conf{response_code}   = undef;
-    $conf{response_method} = undef;
+  $conf{response_error}  = undef;
+  $conf{response_code}   = undef;
+  $conf{response_method} = undef;
 
-    return bless {%conf}, $class;
+  return bless {%conf}, $class;
 }
                         
 ### Return a shallow copy of the object to allow error handling when used in
@@ -70,7 +64,7 @@ sub get_error {
   if ( !defined $response ) {
     $response = {
     request => undef,
-    error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF THE JSON RESPONSE FAILED - "
+    error   => "DIGITAL NZ RETURNED ERROR MESSAGE BUT PARSING OF THE JSON RESPONSE FAILED - "
     . $self->{response_error}
     };
   }
@@ -110,7 +104,7 @@ sub search {
 
     undef $retval;
                                                 
-    ### Trap a case where twitter could return a 200 success but give up badly formed JSON
+    ### Trap a case where digitalnz could return a 200 success but give up badly formed JSON
     ### which would cause it to die. This way it simply assigns undef to $retval
     ### If this happens, response_code, response_message and response_error aren't going to
     ### have any indication what's wrong, so we prepend a statement to request_error.
@@ -132,7 +126,8 @@ __END__
                                                                                                                     
 =head1 NAME
 
-      Net::Twitter - Perl interface to twitter.com
+      Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
+      
 =head1 VERSION
 
       This document describes Net::DigitalNZ version 0.03
