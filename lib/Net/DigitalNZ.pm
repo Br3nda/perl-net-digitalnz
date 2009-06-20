@@ -126,10 +126,6 @@ __END__
 =head1 NAME
 
 Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
-      
-=head1 VERSION
-
-This document describes Net::DigitalNZ version 0.03
 
 =head1 SYNOPSIS
       
@@ -142,7 +138,6 @@ This document describes Net::DigitalNZ version 0.03
       
       
       my $results = $searcher->search($query);
-      print Dumper($results);
 
 =head1 LICENCE AND COPYRIGHT
 
