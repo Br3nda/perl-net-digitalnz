@@ -1,212 +1,179 @@
-package Net::DigitalNZ;
+##############################################################################
+# Net::Twitter - Perl OO interface to www.twitter.com
+# v2.12
+# Copyright (c) 2009 Chris Thompson
+##############################################################################
 
-use warnings;
+package Net::DigitalNZ;
+$VERSION = "0.03";
+use 5.005;
 use strict;
+
 use URI::Escape;
 use JSON::Any 1.19;
 use LWP::UserAgent 2.032;
-use Data::Dumper;
-
-our $VERSION = '0.01';
-
-# <hash>
-# <results type="array">
-# <result>
-# <category>Images</category>
-# <metadata-url>http://api.digitalnz.org/records/v1/58961</metadata-url>
-# <title>Wellington Public Hospital, Newtown, Wellington</title>
-# <date></date>
-# <source-url>http://api.digitalnz.org/records/v1/58961/source</source-url>
-# <content-provider>Alexander Turnbull Library</content-provider>
-# <id>58961</id>
-# <description>Wellington Public Hospital, Newtown, Wellington, photographed by the Burton Brothers in the 1880s.</description>
-# <syndication-date>2009-03-25T03:10:20.067Z</syndication-date>
-# <display-url>http://timeframes.natlib.govt.nz/logicrouter/servlet/LogicRouter?PAGE=object&amp;OUTPUTXSL=object.xslt&amp;pm_RC=REPO02DB&amp;pm_OI=7784&amp;pm_GT=Y&amp;pm_IAC=Y&amp;api_1=GET_OBJECT_XML&amp;num_result=0&amp;Object_Layout=viewimage_object</display-url>
-# <thumbnail-url>http://digital.natlib.govt.nz/get/31209?profile=thumb</thumbnail-url>
-# </result>
-
-# curl "http://api.digitalnz.org/records/v1.xml/?api_key=...&search_text=wellington" | less
-
-sub Search {
-    my $self = shift;
-    my $api_key = shift;
-    my $query = shift;
-#     my $params = shift || {};
-
-    #grab the params
-#     my $num_results = $params->{'num_results'} || 10;
-#     my $start = $params->{'start'} || 1;
-#     my $sort = $params->{'sort'} || undef;
-
-
-    #build URL
-    my $url = 'http://api.digitalnz.org/records/v1.xml/?'
-            .'search_text='. URI::Escape::uri_escape($query)
-            .'&api_key='. URI::Escape::uri_escape($api_key);
-
-#$url .= '&lang=' . URI::Escape::uri_escape($lang) if ($lang);
-
-    #do request
-    my $req = $self->{ua}->get($url);
-
-    die 'Failed to connect to api.digitalnz.org' unless $req->is_success;
-    return [] if $req->content eq 'null';
-
-    #decode the json
-    my $res = JSON::Any->jsonToObj($req->content) ;
-
-    print Dumper($res);
-    return $res->{'results'};
-
-}
-
-
+use Carp;
 
 sub new {
-  my $self = shift;
+my $class = shift;
 
-  my %conf;
+my %conf;
 
-  if ( scalar @_ == 1 ) {
-    if ( ref $_[0] ) {
-      %conf = %{ $_[0] };
+if ( scalar @_ == 1 ) {
+  if ( ref $_[0] ) {
+    %conf = %{ $_[0] };
     } else {
-        die "Bad argument \"" . $_[0] . "\" passed, please pass a hashref containing config values.";
+      croak "Bad argument \"" . $_[0] . "\" passed, please pass a hashref containing config values.";
     }
   }
   else {
     %conf = @_;
-  }
+    }
+    $conf{apiurl}   = 'http://api.digitalnz.org/' unless defined $conf{apiurl};
 
-  die "API key required" unless $conf{api_key};
+    ### Set useragents, HTTP Headers, source codes.
+    $conf{useragent} = "Net::DigitalNZ/$Net::DigitalNZ::VERSION (PERL)"
+    unless defined $conf{useragent};
+    ### Allow specifying a class other than LWP::UA
 
-    
-  $conf{apiurl}   = 'http://api.digitalnz.org' unless defined $conf{apiurl};
+    $conf{no_fallback} = 0 unless defined $conf{no_fallback};
+    $conf{useragent_class} ||= '';
 
-  ### Set useragents, HTTP Headers, source codes.
-  $conf{useragent} = "Net::DigitalNZ/$Net::DigitalNZ::VERSION (PERL)"
-              unless defined $conf{useragent};
-                     
-  ### Create an LWP Object to work with
-  $conf{ua} = LWP::UserAgent->new();
+    ### Create an LWP Object to work with
+    $conf{ua} = LWP::UserAgent->new();
 
-#TODO!
-#   $conf{ua}->env_proxy();
 
-  $conf{response_error}  = undef;
-  $conf{response_code}   = undef;
-  $conf{response_method} = undef;
+    $conf{ua}->env_proxy();
 
-#   return bless {%conf}, &$self;
-    return $self;
+    $conf{response_error}  = undef;
+    $conf{response_code}   = undef;
+    $conf{response_method} = undef;
+
+    return bless {%conf}, $class;
 }
-
+                        
 ### Return a shallow copy of the object to allow error handling when used in
 ### Parallel/Async setups like POE. Set response_error to undef to prevent
 ### spillover, just in case.
-    
+
 sub clone {
-    my $self = shift;
-    bless { %{$self}, response_error => $self->{error_return_val} };
+  my $self = shift;
+  bless { %{$self}, response_error => $self->{error_return_val} };
 }
-                              
+                        
+
+                        
+sub get_error {
+  my $self = shift;
+  my $response = eval { JSON::Any->jsonToObj( $self->{response_error} ) };
+
+  if ( !defined $response ) {
+    $response = {
+    request => undef,
+    error   => "TWITTER RETURNED ERROR MESSAGE BUT PARSING OF THE JSON RESPONSE FAILED - "
+    . $self->{response_error}
+    };
+  }
+
+  return $response;
+
+}
+                          
+sub http_code {
+  my $self = shift;
+  return $self->{response_code};
+}
+
+sub http_message {
+  my $self = shift;
+  return $self->{response_message};
+}
+
+sub search {
+    my $self = shift;
+    my $query = shift;
+    my $params = shift;
+    
+    my $url  = $self->{apiurl} . "records/v1.json/?";
+    $url .= 'api_key='. $self->{api_key};
+    $url .= '&search_text='. $query;
+    my $retval;
+                                  
+                                              
+    ### Make the request, store the results.
+                                                
+    my $req = $self->{ua}->get($url);
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    $self->{response_error}   = $req->content;
+
+    undef $retval;
+                                                
+    ### Trap a case where twitter could return a 200 success but give up badly formed JSON
+    ### which would cause it to die. This way it simply assigns undef to $retval
+    ### If this happens, response_code, response_message and response_error aren't going to
+    ### have any indication what's wrong, so we prepend a statement to request_error.
+                                                
+  if ( $req->is_success ) {
+    $retval = eval { JSON::Any->jsonToObj( $req->content ) };
+
+    if ( !defined $retval ) {
+      $self->{response_error} =
+      "DIGITALNZ RETURNED SUCCESS BUT PARSING OF THE RESPONSE FAILED - " . $req->content;
+      return $self->{error_return_val};
+      }
+  }
+  return $retval;
+} 
 
 1;
-
+__END__
+                                                                                                                    
 =head1 NAME
 
-Net::Digitalnz Search 
+      Net::Twitter - Perl interface to twitter.com
+=head1 VERSION
 
-=head1 SYNOPSYS
+      This document describes Net::DigitalNZ version 0.03
 
+=head1 SYNOPSIS
+      use Net::DigitalNZ;
+      
+      my $query = 'Waitangi';
+      my $api_key = 'get your own api key';
+      
+      my $searcher = Net::DigitalNZ->new(api_key => $api_key);
+      
+      
+      my $results = $searcher->search($query);
+      print Dumper($results);
 
-    
-=head1 DESCRIPTION
+=head1 LICENCE AND COPYRIGHT
 
-For searching twitter - handy for bots
+This module is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself. See L<perlartistic>.
 
-=head1 METHOD
+=head1 DISCLAIMER OF WARRANTY
 
-=head2 search
+BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+FOR THE SOFTWARE, TO THE EXTENT PERMITTED BY APPLICABLE LAW. EXCEPT WHEN
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE
+ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH
+YOU. SHOULD THE SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL
+NECESSARY SERVICING, REPAIR, OR CORRECTION.
 
-required parameter: query
-
-returns: hash
-
-=head1 EXAMPLES
-
-Find tweets containing a word
-
-  $results = $digitalnz->search('word');
-
-Find tweets from a user:
-
-  $results = $digitalnz->search('from:br3nda');
-
-Find tweets to a user:
-
-  $results = $digitalnz->search('to:serenecloud');
-
-Find tweets referencing a user:
-
-  $results = $digitalnz->search('@br3ndabot');
-
-Find tweets containing a hashtag:
-
-  $results = $digitalnz->search('#perl');
-
-Combine any of the operators together:
-
-  $results = $digitalnz->search('solaris anger from:br3nda');
-
- 
-=head1 ADDITIONAL PARAMETERS
-
-  The search method also supports the following optional URL parameters:
- 
-=head2 lang
-
-Restricts tweets to the given language, given by an ISO 639-1 code.
-
-  $results = $digitalnz->search('hello', {lang=>'en'});
-  #search for hello in maori
-  $results = $digitalnz->search('kiaora', {lang=>'mi'});
-
-
-=head2 rpp
-
-The number of tweets to return per page, up to a max of 100.
-
-  $results = $digitalnz->search('love', {rpp=>'10'});
-
-=head2 page
-
-The page number to return, up to a max of roughly 1500 results (based on rpp * page)
-
-  #get page 3
-  $results = $digitalnz->search('love', {page=>'3'});
-
-=head2 since_id
-
-Returns tweets with status ids greater than the given id.
-
-  $results = $digitalnz->search('love', {since_id=>'1021356410'});
-
-=head2 geocode
-
-returns tweets by users located within a given radius of the given latitude/longitude, where the user's location is taken from their Twitter profile. The parameter value is specified by "latitide,longitude,radius", where radius units must be specified as either "mi" (miles) or "km" (kilometers).
-
- $results = $digitalnz->search('coffee', {geocode=> '40.757929,-73.985506,25km'});
-
-Note that you cannot use the near operator via the API to geocode arbitrary locations; however you can use this geocode parameter to search near geocodes directly.
-
-
-=head1 SEE ALSO
-
-L<Net::Twitter>
-
-=head1 AUTHOR
-
-Brenda Wallace <shiny@cpan.org>
-
-=cut
+IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE
+LIABLE TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL,
+OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
+SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+                                                                                                                    
