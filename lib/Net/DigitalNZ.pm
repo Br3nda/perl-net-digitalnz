@@ -93,9 +93,17 @@ sub search {
     
     my $url  = $self->{apiurl} . "records/v1.json/?";
     $url .= 'api_key='. $self->{api_key};
-    $url .= '&search_text='. URI::Escape($query);
+    $url .= '&search_text='. uri_escape($query);
 
+    ### Make a string out of the args to append to the URL.
     
+    foreach my $name ( sort keys %{$params} ) {
+      # drop arguments with undefined values
+      next unless defined $params->{$name};
+      $url .= "&" unless substr( $url, -1 ) eq "?";
+      $url .= $name . "=" . uri_escape( $params->{$name} );
+      
+    }
     my $retval;
     ### Make the request, store the results.
     my $req = $self->{ua}->get($url);
