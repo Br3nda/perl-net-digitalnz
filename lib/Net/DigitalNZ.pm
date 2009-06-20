@@ -1,6 +1,7 @@
-#BAsed heavily on Net::Twitter
-
 package Net::DigitalNZ;
+#Based heavily on Net::Twitter
+
+
 $VERSION = "0.04";
 use 5.005;
 use strict;
@@ -144,9 +145,13 @@ Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
 
+=head1 VERSION CONTROL
+
+http://github.com/Br3nda/perl-net-digitalnz/tree/master
+      
 =head1 CREDIT
 
-      Based heavily on Net::Twitter
+Based heavily on Net::Twitter
 
 =head1 DISCLAIMER OF WARRANTY
 
