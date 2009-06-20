@@ -153,12 +153,14 @@ my $results = $searcher->search($query);
 =head1 METHODS
 
 =head2 search
-      The search records API call is passed a search query and returns a corresponding result set
+
+    The search records API call is passed a search query and returns a corresponding result set
 
 #simple query
       my $results = $searcher->search($query);
+      
 #more complicated query
-      my $results = $searcher->search($query. {key => value});
+      my $results = $searcher->search($query, {key => value});
 
 params
       *  num_results - the number of results the user wishes returned
@@ -168,6 +170,7 @@ params
       * facets - a list of facet fields to include in the output. See the note on facets below for more information.
       * facet_num_results - the number of facet results to include. Only used if the facets parameter is specified, and defaults to 10.
       * facet_start - the offset from which the facet value list should start. Only used if the facets parameter is specified, and defaults to 0.
+      More info at http://www.digitalnz.org/developer/api-docs/search-records
       
       
       
