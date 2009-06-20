@@ -137,6 +137,9 @@ __END__
 
 Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
 
+=head1 DESCRIPTION
+      The metadata available through DigitalNZ comes from content providers across the New Zealand cultural and heritage, broadcasting, education, and government sectors; as well as local community sources and individuals.
+      
 =head1 SYNOPSIS
       
 use Net::DigitalNZ;
