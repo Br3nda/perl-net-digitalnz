@@ -2,7 +2,7 @@ package Net::DigitalNZ;
 #Based heavily on Net::Twitter
 
 
-$VERSION = "0.06";
+$VERSION = "0.08";
 use 5.005;
 use strict;
 
