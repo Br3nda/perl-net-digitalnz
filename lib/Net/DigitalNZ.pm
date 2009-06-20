@@ -170,6 +170,18 @@ params
   * facets - a list of facet fields to include in the output. See the note on facets below for more information.
   * facet_num_results - the number of facet results to include. Only used if the facets parameter is specified, and defaults to 10.
   * facet_start - the offset from which the facet value list should start. Only used if the facets parameter is specified, and defaults to 0.
+
+Example
+      use Net::DigitalNZ;
+      
+      my $query = 'Waitangi';
+      
+      my $api_key = 'get your own api key from http://digitalnz.org.nz';
+      
+      my $searcher = Net::DigitalNZ->new(api_key => $api_key);
+
+      my $results = $searcher->search($query, {num_results => 1});
+      
       
 More info at http://www.digitalnz.org/developer/api-docs/search-records
       
