@@ -1,0 +1,10 @@
+MANIFEST
+META.yml
+Makefile
+Makefile.PL~
+Net-DigitalNZ-0.03.tar.gz
+blib/
+inc/
+lib/results.txt
+pm_to_blib
+
