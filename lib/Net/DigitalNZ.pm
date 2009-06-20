@@ -131,7 +131,7 @@ sub search {
 } 
 
 1;
-__END__
+
                                                                                                                     
 =head1 NAME
 
@@ -193,7 +193,7 @@ Example
       
 More info at http://www.digitalnz.org/developer/api-docs/search-records
       
-=head2 Response elments
+=head2 Response elements
       
       The search results will return the following elements:
       
@@ -255,3 +255,4 @@ FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGES.
                                                                                                                     
+=cut
