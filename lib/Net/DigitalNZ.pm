@@ -130,11 +130,11 @@ sub search {
 } 
 
 1;
+__END__
 
-                                                                                                                    
 =head1 NAME
 
-Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
+# Net::DigitalNZ - Perl interface to digitalnz.org 's open data api.
 
 =head1 DESCRIPTION
       
@@ -144,16 +144,11 @@ Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
       
 =head1 SYNOPSIS
       
-use Net::DigitalNZ;
-
-my $query = 'Waitangi';
-      
-my $api_key = 'get your own api key';
-
-my $searcher = Net::DigitalNZ->new(api_key => $api_key);
-
-
-my $results = $searcher->search($query);
+      use Net::DigitalNZ;
+      my $query = 'Waitangi';
+      my $api_key = 'get your own api key';
+      my $searcher = Net::DigitalNZ->new(api_key => $api_key);
+      my $results = $searcher->search($query);
 
 =head1 METHODS
 
@@ -181,7 +176,7 @@ Example
       
       my $query = 'Waitangi';
       
-      my $api_key = 'get your own api key from http://digitalnz.org.nz';
+      my $api_key = 'get your own api key from http://digitalnz.org';
       
       my $searcher = Net::DigitalNZ->new(api_key => $api_key);
 
