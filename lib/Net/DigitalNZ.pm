@@ -139,6 +139,8 @@ Net::DigitalNZ - Perl interface to digitalnz.org.nz 's open data api.
 
 =head1 DESCRIPTION
       The metadata available through DigitalNZ comes from content providers across the New Zealand cultural and heritage, broadcasting, education, and government sectors; as well as local community sources and individuals.
+
+      You will need to obtain your own API key from http://digitalnz.org
       
 =head1 SYNOPSIS
       
@@ -146,7 +148,7 @@ use Net::DigitalNZ;
 
 my $query = 'Waitangi';
       
-my $api_key = 'get your own api key from http://digitalnz.org.nz';
+my $api_key = 'get your own api key';
 
 my $searcher = Net::DigitalNZ->new(api_key => $api_key);
 
