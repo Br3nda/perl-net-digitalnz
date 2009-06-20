@@ -63,7 +63,7 @@ sub Search {
 
 
 sub new {
-  my $class = shift;
+  my $self = shift;
 
   my %conf;
 
@@ -90,13 +90,24 @@ sub new {
   ### Create an LWP Object to work with
   $conf{ua} = LWP::UserAgent->new();
 
+#TODO!
 #   $conf{ua}->env_proxy();
 
   $conf{response_error}  = undef;
   $conf{response_code}   = undef;
   $conf{response_method} = undef;
 
-  return bless {%conf}, $class;
+#   return bless {%conf}, &$self;
+    return $self;
+}
+
+### Return a shallow copy of the object to allow error handling when used in
+### Parallel/Async setups like POE. Set response_error to undef to prevent
+### spillover, just in case.
+    
+sub clone {
+    my $self = shift;
+    bless { %{$self}, response_error => $self->{error_return_val} };
 }
                               
 
@@ -116,7 +127,7 @@ For searching twitter - handy for bots
 
 =head1 METHOD
 
-=head2 search 
+=head2 search
 
 required parameter: query
 
@@ -149,7 +160,7 @@ Combine any of the operators together:
   $results = $digitalnz->search('solaris anger from:br3nda');
 
  
-=head1 ADDITIONAL PARAMETERS 
+=head1 ADDITIONAL PARAMETERS
 
   The search method also supports the following optional URL parameters:
  
