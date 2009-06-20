@@ -34,7 +34,6 @@ if ( scalar @_ == 1 ) {
   ### Allow specifying a class other than LWP::UA
 
   $conf{no_fallback} = 0 unless defined $conf{no_fallback};
-  $conf{useragent_class} ||= '';
 
   ### Create an LWP Object to work with
   $conf{ua} = LWP::UserAgent->new();
