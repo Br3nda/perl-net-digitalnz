@@ -1,7 +1,7 @@
 #BAsed heavily on Net::Twitter
 
 package Net::DigitalNZ;
-$VERSION = "0.03";
+$VERSION = "0.04";
 use 5.005;
 use strict;
 
@@ -148,6 +148,10 @@ This document describes Net::DigitalNZ version 0.03
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself. See L<perlartistic>.
+
+=head1 CREDIT
+
+      Based heavily on Net::Twitter
 
 =head1 DISCLAIMER OF WARRANTY
 
