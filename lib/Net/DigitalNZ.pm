@@ -93,7 +93,9 @@ sub search {
     
     my $url  = $self->{apiurl} . "records/v1.json/?";
     $url .= 'api_key='. $self->{api_key};
-    $url .= '&search_text='. $query;
+    $url .= '&search_text='. URI::Escape($query);
+
+    
     my $retval;
     ### Make the request, store the results.
     my $req = $self->{ua}->get($url);
@@ -141,6 +143,28 @@ my $searcher = Net::DigitalNZ->new(api_key => $api_key);
 
 my $results = $searcher->search($query);
 
+=head1 METHODS
+
+=head2 search
+      The search records API call is passed a search query and returns a corresponding result set
+
+#simple query
+      my $results = $searcher->search($query);
+#more complicated query
+      my $results = $searcher->search($query. {key => value});
+
+params
+      *  num_results - the number of results the user wishes returned
+      * start - the offset from which the result list should start
+      * sort - the field upon which results are sorted. If sort_field isn't specified the results are sorted by relevance. The sort_field must be one of: category, content_provider, date, syndication_date, title
+      * direction - the direction in which the results are sorted. Can only be used in conjunction with the sort field and must be either asc or desc. If not specified, sort_direction defaults to asc
+      * facets - a list of facet fields to include in the output. See the note on facets below for more information.
+      * facet_num_results - the number of facet results to include. Only used if the facets parameter is specified, and defaults to 10.
+      * facet_start - the offset from which the facet value list should start. Only used if the facets parameter is specified, and defaults to 0.
+      
+      
+      
+    
 =head1 LICENCE AND COPYRIGHT
 
 This module is free software; you can redistribute it and/or
