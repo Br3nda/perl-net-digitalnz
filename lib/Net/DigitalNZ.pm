@@ -29,14 +29,14 @@ our $VERSION = '0.01';
 
 sub search {
     my $self = shift;
-    my $apikey = shift;
+    my $api_key = shift;
     my $query = shift;
     my $params = shift || {};
 
     #grab the params
     my $num_results = $params->{'num_results'} || 10;
     my $start = $params->{'start'} || 1;
-    my $sort = $param->{'sort'} || undef;
+    my $sort = $params->{'sort'} || undef;
 
 
     #build URL
@@ -44,9 +44,7 @@ sub search {
             .'search_text='. URI::Escape::uri_escape($query)
             .'&api_key='. URI::Escape::uri_escape($api_key);
 
-    $url .= '&lang=' . URI::Escape::uri_escape($lang) if ($lang);
-    $url .= '&since_id=' . URI::Escape::uri_escape($since_id) if ($since_id);
-    $url .= '&geocode=' . URI::Escape::uri_escape($geocode) if ($geocode);
+#$url .= '&lang=' . URI::Escape::uri_escape($lang) if ($lang);
 
     #do request
     my $req = $self->{ua}->get($url);
