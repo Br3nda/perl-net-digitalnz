@@ -1,8 +1,9 @@
 
+
 package Net::DigitalNZ;
 #Based heavily on Net::Twitter
 
-$VERSION = "0.14";
+$VERSION = "0.15";
 use 5.005;
 use strict;
 
@@ -22,8 +23,7 @@ if ( scalar @_ == 1 ) {
     } else {
       croak "Bad argument \"" . $_[0] . "\" passed, please pass a hashref containing config values.";
     }
-  }
-  else {
+  } else {
     %conf = @_;
   }
   $conf{apiurl}   = 'http://api.digitalnz.org/' unless defined $conf{apiurl};
@@ -51,7 +51,6 @@ if ( scalar @_ == 1 ) {
 ### Return a shallow copy of the object to allow error handling when used in
 ### Parallel/Async setups like POE. Set response_error to undef to prevent
 ### spillover, just in case.
-
 sub clone {
   my $self = shift;
   bless { %{$self}, response_error => $self->{error_return_val} };
@@ -128,7 +127,44 @@ sub search {
       }
   }
   return $retval;
-} 
+}
+
+sub getmetadata {
+    my $self = shift;
+    my $id = shift;
+
+    #e.g. http://api.digitalnz.org/records/v1/34522
+    my $url = $self->{apiurl} . 'records/v1/' . $id .'.json?';
+    $url .= 'api_key='. $self->{api_key};
+
+    my $retval;
+
+    ### Make the request, store the results.
+    my $req = $self->{ua}->get($url);
+
+    $self->{response_code}    = $req->code;
+    $self->{response_message} = $req->message;
+    $self->{response_error}   = $req->content;
+
+    undef $retval;
+    ### Trap a case where digitalnz could return a 200 success but give up badly formed JSON
+    ### which would cause it to die. This way it simply assigns undef to $retval
+    ### If this happens, response_code, response_message and response_error aren't going to
+    ### have any indication what's wrong, so we prepend a statement to request_error.
+                                                
+    if ( $req->is_success ) {
+        $retval = eval { JSON::Any->jsonToObj( $req->content ) };
+
+        if ( !defined $retval ) {
+        $self->{response_error} =
+        "DIGITALNZ RETURNED SUCCESS BUT PARSING OF THE RESPONSE FAILED - " . $req->content;
+        return $self->{error_return_val};
+        }
+    }
+    return $retval;
+
+    
+}
 
 1;
 __END__
@@ -217,7 +253,7 @@ the offset from which the facet value list should start. Only used if the facets
 
 More info at http://www.digitalnz.org/developer/api-docs/search-records
 
-=head2 Response elements
+=head2 Search Response elements
 
 The search results will return the following elements:
 
@@ -282,6 +318,36 @@ the url of for a thumbnail image of the content to which the record refers. This
 =item facets
 
 the facet result data (if requested). The facets element will contain one facet-field element corresponding to each facet requested. Each facet-field element contains a sorted list of value elements that are made up of a name and num-results element. See the note below for more information on facets.
+
+=back
+
+=head2 getmetadata
+
+The get metadata for a specific record call returns the available metadata for a requested item.
+
+=head2 Getmetadata Response
+
+The returned metadata is provided in an XML wrapper in METS format. Its structure may vary across content providers, depending on their choice of mark-up. However, all records will have the following fields:
+
+=item dc:title
+
+the title of the item, or a brief description if no title exists.
+
+=item dnz:category
+
+the high-level DigitalNZ category(s) that the item belongs to.
+
+=item dnz:content_partner
+
+the organisation who provided the item
+
+=item dnz:landing_url
+
+the preferred URL for linking to the item.
+
+=item dnz:thumbnail_url
+
+the URL of a thumbnail of the item (required for Images, optional for other categories).
 
 =back
 
