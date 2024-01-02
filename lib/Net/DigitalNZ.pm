@@ -3,7 +3,7 @@
 package Net::DigitalNZ;
 #Based heavily on Net::Twitter
 
-$VERSION = "0.15";
+$VERSION = "1.0";
 use 5.005;
 use strict;
 
@@ -25,6 +25,11 @@ if ( scalar @_ == 1 ) {
     }
   } else {
     %conf = @_;
+  }
+  if ($conf{version} && $conf{version} == 3) {
+    delete $conf{version};
+    require Net::DigitalNZ::V3;
+    return Net::DigitalNZ::V3->new(%conf);
   }
   $conf{apiurl}   = 'http://api.digitalnz.org/' unless defined $conf{apiurl};
 
@@ -187,6 +192,12 @@ You will need to obtain your own API key from http://digitalnz.org
      my $results = $searcher->search($query);
 
 =head1 METHODS
+
+=head2 new
+
+C<new> creates a new instance of the client. If you specify C<< version => 3 >>
+then you will get a client that access the V3 DigitalNZ API. See
+L<Net::DigitalNZ::V3> for documentation on using this. 
 
 =head2 search
 
