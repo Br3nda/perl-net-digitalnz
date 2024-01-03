@@ -2,3 +2,4 @@ Revision history for Perl extension Net::DigitalNZ.
 
 0.01  Created at the DigitalNZ HackTest
 
+1.0 2024-01-03 Add support for DigitalNZ API v3

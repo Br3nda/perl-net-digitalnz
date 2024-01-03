@@ -1,16 +1,11 @@
 Net-DigitalNZ 
 ===============================
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+This is a module to interact with the DigitalNZ API. There are two versions supported:
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+* the default, which works with the old V1 API (I'm not sure if that is even
+  still supported by DigitalNZ any more) as Net::DigitalNZ, and
+* the current (as of 2024) V3 API as Net::DigitalNZ::V3.
 
 INSTALLATION
 
@@ -29,7 +24,7 @@ COPYRIGHT AND LICENCE
 
 Perl Artistic Licence
 
-Copyright (C) 2008 by Brenda Wallace <shiny@cpan.org> 
+Copyright (C) 2024 by Brenda Wallace <shiny@cpan.org>, Robin Sheat <rsheat@cpan.org>
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,
